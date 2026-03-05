@@ -1,0 +1,176 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage[numbers]{natbib}
+\usepackage{hyperref}
+\linespread{1.05}
+\begin{document}
+\title{Numerical Reconstruction of the Apparent Orbit of Alpha Centauri}
+\author{Ashok Kumar Ramu \\ Department of Physics and Astronomy \\ University of Waterloo}
+\date{\today}
+
+\maketitle
+
+\begin{abstract}
+The apparent orbit of the visual binary system Alpha Centauri A and B provides a direct observational test of Keplerian orbital dynamics projected onto the plane of the sky. Using published orbital elements from the literature, we numerically reconstructed the apparent orbit of Alpha Centauri B relative to Alpha Centauri A as seen from Earth. Kepler’s equation was solved using Newton’s method to obtain the eccentric anomaly, from which the true anomaly and instantaneous separation were computed. The three-dimensional orbit was then projected onto the sky plane using standard visual-binary geometry, yielding east–north positional offsets as functions of time. In addition to the projected orbit, the observable separation and position angle were calculated and analyzed over one full orbital period. Numerical validation was performed by verifying the expected periastron and apoastron separations and by assessing residuals in the solution of Kepler’s equation. The resulting reconstruction reproduces the known highly inclined, eccentric apparent orbit of the system and demonstrates how orbital elements translate into directly measurable astrometric quantities. This work illustrates the use of numerical methods to connect orbital theory with observational astronomy.
+\end{abstract}
+
+\section{Introduction}
+Visual binary star systems provide one of the most direct observational probes of stellar masses and orbital dynamics. By resolving the relative motion of two gravitationally bound stars on the plane of the sky, it is possible to infer orbital elements and test the predictions of Keplerian dynamics using purely astrometric measurements. In such systems, the true three-dimensional orbit is not observed directly; instead, observers measure a time-dependent projection of the orbit onto the sky plane, characterized by angular separation and position angle. The reconstruction of this apparent orbit therefore plays a central role in connecting theoretical orbital models to observable quantities in stellar astronomy.
+
+Alpha Centauri A and B form the nearest known stellar binary system to the Sun and have been studied extensively for over a century. Owing to their proximity and brightness, the orbital elements of the system are well constrained, and the apparent orbit of component B relative to A exhibits a large angular semi-major axis, high eccentricity, and strong inclination with respect to the line of sight. These properties make Alpha Centauri an ideal test case for demonstrating how Keplerian orbital theory, combined with geometric projection effects, produces the observed sky-plane motion of a visual binary.
+
+In this work, we numerically reconstruct the apparent orbit of Alpha Centauri B relative to Alpha Centauri A using published orbital elements. Kepler’s equation is solved to determine the orbital phase as a function of time, and the resulting three-dimensional orbit is projected onto the plane of the sky using standard visual-binary geometry. Beyond visualizing the projected orbit, we compute the angular separation and position angle as explicit functions of time, which correspond to the primary observables in astrometric measurements. This approach illustrates how numerical methods can be used to bridge orbital theory and observation while providing a framework that can be extended to other visual binary systems.
+
+
+\section{Methods}
+
+\subsection{Orbital Phase and Kepler’s Equation}
+The orbital motion of Alpha Centauri B relative to Alpha Centauri A is described by a Keplerian ellipse characterized by the orbital period $P$, eccentricity $e$, semi-major axis $a$, inclination $i$, longitude of the ascending node $\Omega$, argument of periastron $\omega$, and epoch of periastron passage $T_0$. For a given observation time $t$, the orbital phase is determined through the mean anomaly,
+\begin{equation}
+M(t) = \frac{2\pi}{P}(t - T_0).
+\end{equation}
+
+The eccentric anomaly $E$ is obtained by solving Kepler’s equation,
+\begin{equation}
+E - e \sin E = M.
+\end{equation}
+Because this equation has no closed-form solution, it is solved numerically using Newton’s method. An initial estimate $E_0 = M + e \sin M$ is used, which converges rapidly for moderate eccentricities. Iteration proceeds until the change in $E$ between successive steps falls below a specified tolerance.
+
+Once the eccentric anomaly is known, the true anomaly $\nu$ is computed using
+\begin{equation}
+\nu = 2 \arctan \left( \sqrt{\frac{1+e}{1-e}} \tan \frac{E}{2} \right),
+\end{equation}
+where the instantaneous orbital separation is given by
+\begin{equation}
+r = a(1 - e \cos E).
+\end{equation}
+
+\subsection{Projection onto the plane of the sky}
+
+The apparent orbit of a visual binary is obtained by projecting the three-dimensional Keplerian orbit onto the plane of the sky. The sky-plane coordinate system is defined such that the $x$-axis increases eastward and the $y$-axis increases northward. Using the standard visual-binary convention, the projected offsets of component B relative to A are given by
+\begin{align}
+x &= r \left[ \cos \Omega \cos(\nu + \omega) - \sin \Omega \sin(\nu + \omega)\cos i \right], \\
+y &= r \left[ \sin \Omega \cos(\nu + \omega) + \cos \Omega \sin(\nu + \omega)\cos i \right].
+\end{align}
+
+\subsection{Observable quantities}
+
+From the projected sky-plane coordinates, the angular separation and position angle are computed as
+\begin{equation}
+\rho = \sqrt{x^2 + y^2},
+\qquad
+\theta = \arctan2(x, y),
+\end{equation}
+where the position angle $\theta$ is measured eastward from north. These quantities correspond directly to the primary observables obtained in astrometric measurements of visual binary systems.
+
+\subsection{Numerical Validation}
+
+To ensure the reliability and internal consistency of the numerical reconstruction, several validation checks were performed at different stages of the computation. These checks verify both the accuracy of the numerical solution to Kepler’s equation and the physical consistency of the resulting projected orbit.
+
+First, the convergence of the Newton--Raphson solver used to compute the eccentric anomaly was assessed by evaluating the residual of Kepler’s equation,
+\begin{equation}
+R = E - e \sin E - M,
+\end{equation}
+at each time step. For all epochs considered, the magnitude of the residual was found to be negligible compared to the specified numerical tolerance, confirming that the iterative solver converged to a consistent solution for the eccentric anomaly.
+
+Second, the numerical orbit was checked against analytic expectations for the periastron and apoastron separations. For a Keplerian orbit, the minimum and maximum separations are given by
+\begin{equation}
+r_{\mathrm{peri}} = a(1 - e), \qquad r_{\mathrm{apo}} = a(1 + e).
+\end{equation}
+The minimum and maximum values of the numerically computed orbital separation $r$ were compared with these analytic limits. Agreement within numerical precision confirms that the orbital geometry and phase evolution were implemented correctly.
+
+As an additional consistency check, the continuity and smoothness of the projected orbit were examined. The absence of discontinuities or nonphysical cusps in the sky-plane trajectory verifies that the conversion from eccentric anomaly to true anomaly and the subsequent projection onto the plane of the sky were performed consistently across the full orbital period.
+
+Finally, the temporal evolution of the angular separation and position angle was inspected to ensure physically reasonable behavior. The separation varies smoothly between periastron and apoastron, while the position angle evolves continuously as the system progresses through one orbital cycle. Together, these checks demonstrate that the numerical method faithfully reproduces the expected properties of a highly inclined, eccentric visual-binary orbit.
+
+For the full set of epochs considered, the maximum absolute residual was found to be of order $10^{-15}$, indicating convergence of the Newton iteration to machine precision.
+
+\section{Results}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Orbit.png}
+    \caption{Reconstructed apparent orbit of Alpha Centauri B relative to Alpha Centauri A projected onto the plane of the sky. The east and north directions define the sky-plane coordinate system, with the primary component located at the origin. The solid curve shows the full orbital trajectory over one period, while labeled points mark representative epochs. Dashed curves illustrate the sensitivity of the apparent orbit to small variations of $\pm1^\circ$ in the longitude of the ascending node $\Omega$.}
+    \label{fig:Orbit}
+\end{figure}
+
+Figure~\ref{fig:Orbit} shows the reconstructed apparent orbit of Alpha Centauri B relative to Alpha Centauri A projected onto the plane of the sky over one full orbital period. The orbit exhibits a strongly foreshortened elliptical shape due to the high orbital inclination, as well as a pronounced asymmetry between periastron and apoastron distances consistent with the system’s significant eccentricity. The primary component, Alpha Centauri A, is located at the origin, while the secondary traces a closed, continuous trajectory around it.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Separation.png}
+    \caption{Angular separation $\rho$ between Alpha Centauri A and B as a function of time over one orbital period. The dashed vertical lines indicate the epochs of minimum and maximum apparent separation on the sky. The asymmetric shape of the curve reflects the eccentricity of the orbit and the varying orbital velocity predicted by Kepler's second law.}
+    \label{fig:Separation}
+\end{figure}
+
+The temporal evolution of the angular separation between the two components is shown in Figure~\ref{fig:Separation}. The separation varies smoothly between a minimum near periastron and a maximum near apoastron, reflecting the changing orbital radius as the system progresses through its orbit. The epoch of minimum sky-projected separation does not coincide exactly with the periastron epoch because the observed separation $\rho$ depends on the viewing geometry of the orbit, including the inclination and longitude of the ascending node, rather than solely on the true orbital radius $r$. Because the angular separation $\rho$ is a projection of the true orbital separation $r$ onto the plane of the sky, it satisfies $\rho \le r$, with equality only when the separation vector lies entirely in the sky plane. The non-sinusoidal nature of the separation curve is a direct consequence of the orbital eccentricity, with the most rapid variation occurring near periastron passage. The extrema of the separation agree with the analytic expectations for a Keplerian orbit, confirming the physical consistency of the numerical reconstruction.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Angle.png}
+    \caption{Position angle $\theta$ of Alpha Centauri B measured eastward from north as a function of time. The position angle evolves continuously over the orbital cycle, with more rapid changes near periastron due to the higher orbital velocity. The angle has been unwrapped to show the continuous evolution of the apparent motion.}
+    \label{fig:Angle}
+\end{figure}
+
+Figure~\ref{fig:Angle} presents the position angle of Alpha Centauri B measured eastward from north as a function of time. The position angle evolves continuously over the orbital cycle, with the rate of change varying as a function of orbital phase. Near periastron, the position angle changes more rapidly due to the increased orbital speed, while near apoastron the evolution is slower. This behavior is consistent with Kepler’s second law and illustrates how the combination of orbital geometry and projection effects determines the observed astrometric motion of the system.
+
+Together, these results demonstrate that the numerical reconstruction reproduces the known qualitative and quantitative features of the Alpha Centauri AB system. The agreement between the projected orbit, separation, and position angle confirms that the adopted orbital elements and numerical methods correctly capture both the intrinsic orbital dynamics and their observational manifestation on the sky. The strong inclination of the orbit produces a marked compression of the apparent minor axis, highlighting the importance of projection effects in interpreting visual-binary measurements.
+
+\section{Sensitivity Analysis}
+
+\subsection{Longitude of the Ascending Node}
+
+To assess the sensitivity of the apparent orbit to uncertainties in the orbital elements, we examined the effect of varying the longitude of the ascending node, $\Omega$, while keeping all other parameters fixed. The longitude of the ascending node determines the orientation of the orbital plane relative to the plane of the sky and is therefore expected to have a strong influence on the projected geometry of the orbit.
+
+Figure~\ref{fig:Orbit} shows the apparent sky-plane orbits computed for the nominal value of $\Omega$ and for perturbations of $\Omega \pm 1^\circ$. The resulting trajectories retain the same overall shape and scale, but exhibit a clear rotation on the plane of the sky. This behavior reflects the geometric role of $\Omega$ as a rotation angle that sets the orientation of the projected orbit without altering the intrinsic orbital dynamics.
+
+The modest change in $\Omega$ produces a visibly measurable displacement in the apparent orbit, particularly near regions of large projected separation. This sensitivity highlights the importance of accurately determining the longitude of the ascending node when fitting visual-binary orbits to astrometric data. At the same time, the smooth deformation of the projected orbit confirms the numerical stability of the reconstruction under small perturbations of the orbital elements.
+
+Overall, this analysis demonstrates that the apparent orbit is robust to small variations in $\Omega$, while remaining sufficiently sensitive for such variations to be detectable in high-precision astrometric observations. This balance between robustness and sensitivity is a key consideration in the interpretation and fitting of visual-binary orbital solutions.
+
+\section{Discussion and Limitations}
+
+The numerical reconstruction of the Alpha Centauri AB apparent orbit demonstrates how Keplerian orbital theory, combined with geometric projection effects, leads directly to the astrometric quantities measured for visual binary systems. By solving Kepler’s equation numerically and projecting the resulting orbit onto the plane of the sky, we reproduced the characteristic highly inclined, eccentric apparent orbit of the system, as well as the expected temporal behavior of the angular separation and position angle. The agreement between analytic expectations, numerical validation checks, and sensitivity tests indicates that the computational approach is internally consistent and physically well founded.
+
+Despite this agreement, several simplifying assumptions limit the scope of the present analysis. The orbital elements were treated as exact inputs, whereas in practice they are determined from observational data with associated uncertainties and correlations. Additionally, the orbit was modeled as a purely Keplerian two-body system, neglecting perturbations from additional bodies, relativistic corrections, and non-Keplerian effects that may become relevant for higher-precision astrometric studies. These assumptions are appropriate for demonstrating the methodology but would need to be revisited for precision orbit fitting.
+
+Future extensions of this work could incorporate observational uncertainties directly by fitting orbital elements to astrometric data using least-squares or Bayesian methods. Additional refinements could include propagating measurement errors into confidence regions for the apparent orbit or extending the model to include perturbative or relativistic corrections. Such developments would allow the numerical framework presented here to be applied directly to orbit determination and parameter estimation for a wider range of visual binary systems.
+
+\section*{Data and Code Availability}
+All numerical computations and figure generation were performed using custom Python scripts. The code used in this work is publicly available at:
+\href{https://github.com/Ashok1103/Physics-Research-Portfolio.git}{github.com/Ashok1103/Physics-Research-Portfolio.git}
+
+\begin{thebibliography}{9}
+
+\bibitem{Pourbaix2002}
+D.~Pourbaix, et al.,
+\newblock ``The orbit of $\alpha$ Centauri revisited,''
+\newblock \emph{Astronomy \& Astrophysics}, vol.~386, no.~1, pp.~280--285, 2002.
+
+\bibitem{Koberlein2016}
+B.~Koberlein and D.~Meisel, 
+\emph{Astrophysics through Computation: With Mathematica\textregistered\ Support}, 
+Cambridge University Press, 2016.
+
+\bibitem{Harris2020}
+C.~R. Harris, et al.,
+\newblock ``Array programming with NumPy,''
+\newblock \emph{Nature}, vol.~585, pp.~357--362, 2020.
+
+\bibitem{Hunter2007}
+J.~D. Hunter,
+\newblock ``Matplotlib: A 2D graphics environment,''
+\newblock \emph{Computing in Science \& Engineering}, vol.~9, no.~3, pp.~90--95, 2007.
+
+\bibitem{Virtanen2020}
+P.~Virtanen, et al.,
+\newblock ``SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python,''
+\newblock \emph{Nature Methods}, vol.~17, pp.~261--272, 2020.
+
+\end{thebibliography}
+
+\end{document}
