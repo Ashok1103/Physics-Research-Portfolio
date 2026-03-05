@@ -43,13 +43,13 @@ pip install numpy matplotlib
 
 Run the script:
 
-python orbit_reconstruction.py
+Alpha Centauri Apparent Orbit.ipynb
 
 This produces the figures:
 
-- orbit.png
-- separation.png
-- position_angle.png
+- Orbit.png
+- Separation.png
+- Angle.png
 
 ## Data Source
 
