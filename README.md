@@ -35,5 +35,5 @@ Physics writing and LaTeX typesetting
 Connecting theoretical models to observational data
 
 
-Contact
+Contact:
 Feel free to reach out via GitHub or email for questions about any of these projects.
