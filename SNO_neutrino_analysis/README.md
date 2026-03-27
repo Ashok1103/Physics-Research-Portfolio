@@ -43,10 +43,10 @@ sno-neutrino-analysis/
     └── sno_paper.tex        ← full LaTeX writeup
 
 How to Run
-bashpip install numpy pandas matplotlib scipy
-python sno_msw_plot.py
+pip install numpy pandas matplotlib scipy jupyter
+jupyter notebook python_notebook/SNO_neutrino_analysis.ipynb
 The script loads data/b8spectrum.csv, performs the chi-squared fit,
-and saves all four figure panels to figures/.
+and saves all four figure panels.
 
 References
 
