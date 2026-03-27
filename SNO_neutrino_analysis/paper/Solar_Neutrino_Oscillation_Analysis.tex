@@ -1,0 +1,613 @@
+\documentclass[12pt, a4paper]{article}
+ 
+% ── Packages ──────────────────────────────────────────────────────────────────
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{physics}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{caption}
+ 
+\onehalfspacing
+ 
+\hypersetup{
+    colorlinks = true,
+    linkcolor  = blue!70!black,
+    citecolor  = blue!70!black,
+    urlcolor   = blue!70!black
+}
+ 
+% ── Title ─────────────────────────────────────────────────────────────────────
+\title{%
+    \textbf{Measuring the Solar Mixing Angle $\theta_{12}$}\\[4pt]
+    \large A Chi-Squared Analysis of SNO Phase~I Data\\
+    in the Adiabatic MSW Regime
+}
+ 
+\author{Ashok Kumar Ramu\\[2pt]
+    \small Department of Physics and Astronomy, University of Waterloo}
+ 
+\date{\today}
+ 
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{document}
+\maketitle
+ 
+% ── Abstract ──────────────────────────────────────────────────────────────────
+\begin{abstract}
+We reproduce the measurement of the solar neutrino mixing angle $\theta_{12}$
+using the charged-current (CC) and neutral-current (NC) flux measurements from
+the Sudbury Neutrino Observatory (SNO) Phase~I dataset (2002).
+Working in the adiabatic Mikheyev--Smirnov--Wolfenstein (MSW) regime,
+appropriate for high-energy ${}^8\text{B}$ solar neutrinos,
+the electron-neutrino survival probability reduces to
+$P_{ee} = \sin^2\theta_{12}$.
+We perform a chi-squared minimisation of the CC/NC flux ratio and extract
+\[
+    \theta_{12} = 36.0^{\circ} \pm 2.3^{\circ},
+\]
+consistent with the SNO-only result published in 2002.
+We demonstrate that the vacuum-averaged formula
+$P_{ee} = 1 - \tfrac{1}{2}\sin^2 2\theta_{12} \approx 0.548$
+is incompatible with the observed suppression of $\sim\!34\%$,
+confirming that matter effects are essential to the correct interpretation
+of solar neutrino data.
+The slight offset from the current PDG combined value of
+$\theta_{12} = 33.4^{\circ}$ is explained qualitatively through
+the Earth's day-night regeneration effect and the subsequent KamLAND
+constraint on $\Delta m^2_{21}$.
+\end{abstract}
+
+\newpage 
+\tableofcontents
+\newpage
+ 
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Introduction}
+\label{sec:intro}
+ 
+The solar neutrino problem --- the deficit of electron neutrinos arriving at
+Earth relative to Standard Solar Model (SSM) predictions --- stood as one of
+the most compelling anomalies in particle physics for over three decades
+\cite{Homestake1968, Bahcall1989}.
+Early radiochemical experiments such as Homestake, GALLEX, and SAGE observed
+roughly one-third to one-half the predicted flux, but could not determine
+whether the missing neutrinos had oscillated into other flavours or whether
+the SSM itself was simply wrong.
+ 
+The Sudbury Neutrino Observatory (SNO), located 2~km underground in the
+INCO Creighton mine in Sudbury, Ontario (now SNOLAB), resolved this ambiguity
+decisively \cite{SNO2002}.
+By using heavy water ($\text{D}_2\text{O}$) as both target and Cherenkov
+medium, SNO could simultaneously measure:
+\begin{itemize}
+    \item the \textbf{charged-current} (CC) reaction
+          $\nu_e + d \to p + p + e^-$,
+          sensitive only to electron neutrinos;
+    \item the \textbf{neutral-current} (NC) reaction
+          $\nu_x + d \to p + n + \nu_x$,
+          equally sensitive to all active flavours.
+\end{itemize}
+The ratio $\phi_\text{CC}/\phi_\text{NC}$ directly measures the
+electron-neutrino survival probability $P_{ee}$, independent of solar model
+uncertainties.
+When SNO reported $\phi_\text{NC} \approx \phi_\text{SSM}$ but
+$\phi_\text{CC} \approx 0.35\,\phi_\text{SSM}$, it provided the first
+direct, model-independent proof that solar neutrinos change flavour
+in transit \cite{SNO2002}.
+ 
+In this paper we reproduce the SNO Phase~I extraction of $\theta_{12}$,
+emphasising the critical role of the MSW matter effect.
+Section~\ref{sec:theory} derives the relevant survival probability from
+first principles.
+Section~\ref{sec:data} describes the experimental inputs and chi-squared
+method.
+Section~\ref{sec:results} presents our fit result and walks through each
+panel of the analysis figure.
+Section~\ref{sec:discussion} discusses the limitations of the SNO-only
+measurement and the refinements brought by KamLAND and the Earth's
+regeneration effect.
+ 
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Theoretical Framework}
+\label{sec:theory}
+ 
+\subsection{Two-Flavour Neutrino Oscillations in Vacuum}
+ 
+In vacuum, the flavour eigenstates $\ket{\nu_e}$ and $\ket{\nu_\mu}$ are
+related to the mass eigenstates $\ket{\nu_1}$ and $\ket{\nu_2}$ by the
+PMNS mixing matrix, which in the two-flavour approximation reduces to a
+single rotation by angle $\theta_{12}$:
+\begin{equation}
+    \begin{pmatrix} \nu_e \\ \nu_\mu \end{pmatrix}
+    =
+    \begin{pmatrix}
+        \cos\theta_{12} & \sin\theta_{12} \\
+       -\sin\theta_{12} & \cos\theta_{12}
+    \end{pmatrix}
+    \begin{pmatrix} \nu_1 \\ \nu_2 \end{pmatrix}.
+    \label{eq:mixing}
+\end{equation}
+For a neutrino propagating a distance $L$ in vacuum, the survival probability
+oscillates as:
+\begin{equation}
+    P_{ee}^{\text{vac}}(L,E)
+    = 1 - \sin^2 2\theta_{12}\,
+      \sin^2\!\left(\frac{\Delta m^2_{21}\, L}{4E}\right),
+    \label{eq:pvac}
+\end{equation}
+where $\Delta m^2_{21} = m_2^2 - m_1^2$.
+Averaging over many oscillation lengths yields:
+\begin{equation}
+    \langle P_{ee}^{\text{vac}} \rangle
+    = 1 - \tfrac{1}{2}\sin^2 2\theta_{12}.
+    \label{eq:pvac_avg}
+\end{equation}
+ 
+\subsection{The MSW Effect}
+\label{sec:msw}
+ 
+Equation~\eqref{eq:pvac_avg} assumes the neutrino travels in vacuum its
+entire journey.
+This is incorrect for ${}^8\text{B}$ solar neutrinos, produced in the
+Sun's core where the electron number density $N_e \sim 10^{26}\ \text{cm}^{-3}$.
+ 
+In matter, the effective Hamiltonian acquires an additional potential
+$V = \sqrt{2}\,G_F N_e$ for $\nu_e$, shifting the mixing angle to an
+effective in-matter value $\theta_m$:
+\begin{equation}
+    \tan 2\theta_m
+    = \frac{\sin 2\theta_{12}}
+           {\cos 2\theta_{12}
+            - \dfrac{2\sqrt{2}\,G_F N_e E}{\Delta m^2_{21}}}.
+    \label{eq:msw_angle}
+\end{equation}
+The \textbf{MSW resonance} occurs when the denominator vanishes:
+\begin{equation}
+    N_e^{\text{res}}
+    = \frac{\Delta m^2_{21}\cos 2\theta_{12}}{2\sqrt{2}\,G_F E}.
+    \label{eq:resonance}
+\end{equation}
+For ${}^8\text{B}$ neutrinos with $E \sim 5$--$10$~MeV, this resonance
+lies well within the solar interior.
+ 
+\subsection{Adiabatic Propagation and the Survival Probability}
+ 
+In the \textbf{adiabatic limit}, the propagation proceeds as follows:
+\begin{enumerate}
+    \item At production in the high-density core, $\theta_m \approx 90^\circ$,
+          so the electron neutrino is born almost entirely in the heavier
+          matter eigenstate $\ket{\nu_2^m}$.
+    \item As the neutrino travels outward through decreasing density,
+          adiabaticity ensures it remains in the same matter eigenstate.
+    \item At the solar surface, $N_e \to 0$ and $\theta_m \to \theta_{12}$,
+          so the neutrino exits as a pure vacuum mass eigenstate $\ket{\nu_2}$.
+    \item The probability of detecting this state as $\nu_e$ is:
+          \begin{equation}
+              \boxed{P_{ee}^{\text{MSW}}
+              = \left|\braket{\nu_e}{\nu_2}\right|^2
+              = \sin^2\theta_{12}.}
+              \label{eq:pmsw}
+          \end{equation}
+\end{enumerate}
+For $\theta_{12} = 33.4^\circ$, the two formulas give strikingly
+different predictions:
+\begin{align}
+    P_{ee}^{\text{MSW}}
+        &= \sin^2(33.4^\circ) \approx 0.303, \label{eq:pmsw_num}\\
+    \langle P_{ee}^{\text{vac}}\rangle
+        &= 1 - \tfrac{1}{2}\sin^2(66.8^\circ) \approx 0.578.
+        \label{eq:pvac_num}
+\end{align}
+SNO observed $P_{ee} \approx 0.346$ --- consistent with MSW and
+incompatible with vacuum at the $\sim\!6\sigma$ level.
+ 
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Data and Method}
+\label{sec:data}
+ 
+\subsection{SNO Phase I Flux Measurements}
+ 
+We use the flux measurements from Reference~\cite{SNO2002}, in units of
+$10^6\ \text{cm}^{-2}\,\text{s}^{-1}$:
+\begin{align}
+    \phi_\text{CC} &= 1.76 \pm 0.11, \label{eq:phicc}\\
+    \phi_\text{NC} &= 5.09 \pm 0.45. \label{eq:phinc}
+\end{align}
+ 
+\subsection{Deriving the Experimental Survival Probability}
+ 
+The observed electron-neutrino survival probability is:
+\begin{equation}
+    P_{ee}^{\text{obs}}
+    = \frac{\phi_\text{CC}}{\phi_\text{NC}}
+    = \frac{1.76}{5.09}
+    = 0.3458,
+    \label{eq:peeobs}
+\end{equation}
+with uncertainty propagated via:
+\begin{equation}
+    \frac{\sigma_{P_{ee}}}{P_{ee}}
+    = \sqrt{\left(\frac{\sigma_\text{CC}}{\phi_\text{CC}}\right)^2
+           +\left(\frac{\sigma_\text{NC}}{\phi_\text{NC}}\right)^2},
+    \label{eq:errprop}
+\end{equation}
+giving:
+\begin{equation}
+    P_{ee}^{\text{obs}} = 0.3458 \pm 0.0374.
+    \label{eq:peeobs_final}
+\end{equation}
+ 
+\subsection{Chi-Squared Fit}
+ 
+The chi-squared function for a single-point measurement is:
+\begin{equation}
+    \chi^2(\theta_{12})
+    = \left(
+        \frac{\sin^2\theta_{12} - 0.3458}{0.0374}
+      \right)^2,
+    \label{eq:chi2}
+\end{equation}
+minimised analytically by:
+\begin{equation}
+    \theta_{12}^{\text{best}}
+    = \arcsin\!\sqrt{P_{ee}^{\text{obs}}},
+    \qquad
+    \sigma_{\theta_{12}}
+    = \frac{\sigma_{P_{ee}}}{\sin 2\theta_{12}}.
+    \label{eq:bestfit}
+\end{equation}
+ 
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Results}
+\label{sec:results}
+ 
+\subsection{Best-Fit Mixing Angle}
+ 
+Our central result is:
+\begin{equation}
+    \boxed{\theta_{12} = 36.0^{\circ} \pm 2.3^{\circ}
+    \quad (\text{SNO Phase~I only}).}
+    \label{eq:result}
+\end{equation}
+Table~\ref{tab:results} summarises all key quantities.
+ 
+\begin{table}[h!]
+    \centering
+    \caption{Summary of experimental inputs and fit results.}
+    \label{tab:results}
+    \begin{tabular}{lcc}
+        \toprule
+        Quantity & Value & Units \\
+        \midrule
+        $\phi_\text{CC}$ & $1.76 \pm 0.11$
+            & $10^6\ \text{cm}^{-2}\,\text{s}^{-1}$ \\
+        $\phi_\text{NC}$ & $5.09 \pm 0.45$
+            & $10^6\ \text{cm}^{-2}\,\text{s}^{-1}$ \\
+        \midrule
+        $P_{ee}^{\text{obs}}$ (CC/NC) & $0.3458 \pm 0.0374$ & --- \\
+        \midrule
+        $\theta_{12}$ (this work)     & $36.0^\circ \pm 2.3^\circ$ & --- \\
+        $P_{ee}^{\text{MSW}}$ (fit)   & $0.346$ & --- \\
+        $P_{ee}^{\text{vac}}$ at fit $\theta$ & $0.548$ & ruled out \\
+        \midrule
+        $\theta_{12}$ (PDG combined)  & $33.4^\circ \pm 0.8^\circ$ & --- \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+ 
+\subsection{Panel A: Survival Probability Models}
+ 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.80\textwidth]{panel_A.png}
+    \caption{%
+        Electron-neutrino survival probability $P_{ee}$ as a function of
+        $\theta_{12}$.
+        Blue: adiabatic MSW prediction $\sin^2\theta_{12}$.
+        Orange dashed: vacuum-averaged prediction
+        $1 - \tfrac{1}{2}\sin^2 2\theta_{12}$.
+        Green band: SNO-measured $P_{ee}^{\text{obs}} = 0.346 \pm 0.037$.
+        Crimson dashed: PDG combined value $\theta_{12} = 33.4^\circ$.
+    }
+    \label{fig:panelA}
+\end{figure}
+ 
+Figure~\ref{fig:panelA} shows the most important conceptual result of
+this analysis.
+The green horizontal band is what SNO actually measured:
+$P_{ee}^{\text{obs}} = 0.346 \pm 0.037$.
+The blue MSW curve $\sin^2\theta_{12}$ passes cleanly through this band
+at $\theta_{12} \approx 36^\circ$, consistent with our fit.
+ 
+The orange vacuum curve $1 - \tfrac{1}{2}\sin^2 2\theta_{12}$ tells a
+completely different story.
+Its minimum value is $0.5$, reached at maximal mixing ($\theta_{12} = 45^\circ$).
+It never reaches the observed level of $\sim\!35\%$ for any physical value
+of $\theta_{12}$.
+The vacuum formula is therefore not merely a poor fit --- it is
+\emph{structurally incompatible} with the SNO measurement, regardless of
+the angle chosen.
+This is the graphical proof that matter effects dominate solar neutrino
+propagation.
+ 
+\subsection{Panel B: Chi-Squared Profile}
+ 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.80\textwidth]{panel_B.png}
+    \caption{%
+        Chi-squared profile $\Delta\chi^2(\theta_{12})$.
+        Blue solid: MSW model.
+        Purple dashed: vacuum model, shown for comparison.
+        Shaded regions: $1\sigma$ ($\Delta\chi^2 < 1$) and
+        $2\sigma$ ($\Delta\chi^2 < 4$) confidence intervals.
+        Dark blue dotted: best-fit $36.0^\circ \pm 2.3^\circ$.
+        Crimson dashed: PDG combined value $33.4^\circ$.
+    }
+    \label{fig:panelB}
+\end{figure}
+ 
+Figure~\ref{fig:panelB} quantifies the fit quality and uncertainty.
+The MSW profile (blue) has a clean minimum at $\theta_{12} = 36.0^\circ$.
+The $1\sigma$ confidence interval spans approximately
+$[33.8^\circ,\ 38.3^\circ]$.
+ 
+Two features deserve attention.
+First, the crimson PDG line at $33.4^\circ$ falls just outside the
+$1\sigma$ boundary at $\Delta\chi^2 \approx 1.3$.
+This is not a contradiction --- it reflects the known systematic bias
+in the SNO-only result that is corrected once the Earth's regeneration
+effect and the KamLAND constraint are included, as discussed in
+Section~\ref{sec:discussion}.
+ 
+Second, the vacuum model's profile (purple dashed) never reaches zero ---
+its minimum occurs near $45^\circ$, where $P_{ee}^{\text{vac}} = 0.5$,
+still far above the observed value.
+The two profiles are visually separated across the entire physical range,
+confirming that the choice of model is not a matter of precision but of
+correctness.
+ 
+\subsection{Panel C: B8 Spectrum and Missing Neutrinos}
+ 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.80\textwidth]{panel_C.png}
+    \caption{%
+        Theoretical ${}^8\text{B}$ spectrum from the SSM (blue dashed)
+        compared with the SNO-derived observed $\nu_e$ spectrum (black
+        points).
+        Orange shading: neutrinos that oscillated to $\nu_\mu/\nu_\tau$
+        and were invisible to the CC channel.
+        Green shading: surviving $\nu_e$ detected via CC.
+        Red curve: best-fit MSW model at $\theta_{12} = 36.0^\circ$.
+    }
+    \label{fig:panelC}
+\end{figure}
+ 
+Figure~\ref{fig:panelC} presents the spectral picture of the solar
+neutrino deficit.
+The blue dashed curve is the theoretical ${}^8\text{B}$ flux shape
+predicted by the SSM, normalised to unit area over the SNO-sensitive
+range of $3.5$--$12$~MeV.
+The black points show the observed CC-derived spectrum, obtained by
+scaling the theoretical shape by $P_{ee}^{\text{obs}} = 0.346$.
+ 
+The shaded regions make the physics immediately visible.
+The \textbf{orange region} --- the gap between the SSM prediction and
+the observed spectrum --- represents neutrinos that have oscillated to
+$\nu_\mu$ or $\nu_\tau$.
+These neutrinos are still present (detected via NC) but are invisible
+to the CC channel.
+The \textbf{green region} represents the surviving electron neutrinos
+detected via CC interactions.
+ 
+Crucially, the orange region is \emph{larger} than the green region,
+meaning more than half the solar neutrinos have changed flavour by the
+time they reach the detector.
+This is the visual statement of MSW-dominated flavour conversion: the
+Sun is producing predominantly $\ket{\nu_2}$ mass eigenstates, of which
+only $\sin^2\theta_{12} \approx 35\%$ overlap with the $\nu_e$ flavour
+state.
+ 
+\subsection{Panel D: Numerical Summary}
+ 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.60\textwidth]{panel_D.png}
+    \caption{%
+        Numerical summary of the SNO Phase~I analysis: experimental
+        inputs, derived survival probability, fit result, and comparison
+        with the vacuum prediction and the PDG combined value.
+    }
+    \label{fig:panelD}
+\end{figure}
+ 
+Figure~\ref{fig:panelD} collects the numerical results for reference.
+The measured fluxes $\phi_\text{CC}$ and $\phi_\text{NC}$ from
+Reference~\cite{SNO2002} are the sole experimental inputs.
+All other quantities are derived from these two numbers through the MSW
+framework of Section~\ref{sec:theory}.
+ 
+The ruling-out of the vacuum prediction is made quantitative here:
+$P_{ee}^{\text{vac}} = 0.548$ at the best-fit angle, compared to the
+observed $0.346$ --- a discrepancy of
+$(0.548 - 0.346)/0.037 \approx 5.5\sigma$.
+No value of $\theta_{12}$ brings the vacuum formula into agreement
+with the data.
+ 
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Discussion}
+\label{sec:discussion}
+ 
+\subsection{Why the Vacuum Formula Fails}
+ 
+The vacuum-averaged survival probability has a hard lower bound of $0.5$
+at maximal mixing.
+SNO measured $P_{ee} \approx 0.346$, which lies below this bound.
+No adjustment of $\theta_{12}$ can fix this --- the formula is
+structurally wrong for this physical regime.
+ 
+The reason is that the vacuum formula assumes the neutrino accumulates
+a phase that averages to a $50/50$ mixture.
+But ${}^8\text{B}$ neutrinos are produced deep inside the Sun where
+matter effects rotate the mixing angle to $\theta_m \approx 90^\circ$.
+The neutrino exits as a pure mass eigenstate $\ket{\nu_2}$, and the
+overlap $|\braket{\nu_e}{\nu_2}|^2 = \sin^2\theta_{12}$ is set entirely
+by the vacuum mixing angle --- not by any oscillation phase.
+ 
+\subsection{Limitations of the SNO-Only Result}
+ 
+Our result of $\theta_{12} = 36.0^\circ \pm 2.3^\circ$ has two notable
+limitations relative to the PDG value of $33.4^\circ \pm 0.8^\circ$.
+ 
+\paragraph{Statistical uncertainty ($\pm 2.3^\circ$).}
+The SNO CC/NC measurement provides only a single integrated ratio with
+no energy resolution.
+The adiabatic MSW formula $P_{ee} = \sin^2\theta_{12}$ is independent
+of $\Delta m^2_{21}$, so SNO alone cannot constrain the mass-squared
+splitting.
+This leaves a parameter degeneracy that inflates the uncertainty by
+a factor of $\sim\!3$ compared to the combined fit.
+ 
+\paragraph{Systematic offset ($\sim\!2.6^\circ$).}
+Two effects bias the SNO-only result upward.
+ 
+\subsection{The Earth's Day-Night Regeneration Effect}
+ 
+When solar neutrinos pass through the Earth at night, they encounter
+increasing electron density.
+This triggers a partial reverse MSW conversion: some $\nu_\mu/\nu_\tau$
+flux partially reconverts to $\nu_e$, slightly elevating the nighttime
+CC rate.
+Without correcting for this, the time-averaged $P_{ee}^{\text{obs}}$
+is slightly overestimated.
+The corrected survival probability is:
+\begin{equation}
+    P_{ee}^{\text{corrected}}
+    = \sin^2\theta_{12} + \delta(N_e,\, \Delta m^2_{21},\, E),
+    \label{eq:regen}
+\end{equation}
+where $\delta$ is computed by integrating the MSW Hamiltonian through
+the Earth's density profile (PREM \cite{PREM}).
+Including this term pulls the fitted $\theta_{12}$ downward toward
+the true value.
+ 
+\subsection{The KamLAND Constraint}
+ 
+KamLAND \cite{KamLAND2003} measured $\bar\nu_e$ disappearance from
+Japanese reactors at $L \sim 180$~km, observing an energy-resolved
+oscillation pattern:
+\begin{equation}
+    P_{\bar\nu_e \to \bar\nu_e}(L, E)
+    = 1 - \sin^2 2\theta_{12}\,
+      \sin^2\!\left(\frac{1.27\,\Delta m^2_{21}\,L}{E}\right).
+    \label{eq:kamland}
+\end{equation}
+This provided a precise independent measurement of $\Delta m^2_{21}$.
+Combined with SNO in a global fit \cite{PDG2022}:
+\begin{equation}
+    \theta_{12} = 33.4^\circ \pm 0.8^\circ,
+    \qquad
+    \Delta m^2_{21} = (7.53 \pm 0.18)\times 10^{-5}\ \text{eV}^2.
+    \label{eq:pdg}
+\end{equation}
+The combination broke the parameter degeneracy, reduced the uncertainty
+by a factor of $\sim\!3$, and pulled the central value from $36.0^\circ$
+to $33.4^\circ$.
+ 
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Conclusion}
+\label{sec:conclusion}
+ 
+We have reproduced the SNO Phase~I measurement of the solar neutrino
+mixing angle using the CC/NC flux ratio as the primary observable.
+Working in the physically correct adiabatic MSW regime, we obtain
+\[
+    \theta_{12} = 36.0^{\circ} \pm 2.3^{\circ},
+\]
+consistent with the original SNO-only result published in 2002.
+ 
+The analysis demonstrates three key points:
+\begin{enumerate}
+    \item The vacuum-averaged oscillation formula is \emph{structurally
+          incompatible} with SNO data --- no value of $\theta_{12}$
+          brings $P_{ee}^{\text{vac}} \geq 0.5$ into agreement with
+          the observed $P_{ee} \approx 0.35$.
+          Matter effects are not a perturbative correction; they are the
+          dominant physics.
+ 
+    \item The adiabatic MSW limit yields $P_{ee} = \sin^2\theta_{12}$,
+          a direct consequence of the neutrino exiting the Sun as the
+          pure mass eigenstate $\ket{\nu_2}$.
+ 
+    \item The SNO-only offset from the PDG value is physically understood:
+          it arises from neglecting the Earth's day-night regeneration
+          effect and the $\Delta m^2_{21}$ constraint subsequently
+          provided by KamLAND.
+\end{enumerate}
+ 
+The story of solar neutrino oscillations stands as one of the most
+compelling in modern physics: a deficit first observed by Davis in 1968
+\cite{Homestake1968}, explained by Mikheyev, Smirnov, and Wolfenstein
+in the 1980s \cite{MSW1985, MSW1986}, and confirmed by SNO and KamLAND
+in the early 2000s --- earning the 2015 Nobel Prize in Physics shared
+by Takaaki Kajita and Arthur B.~McDonald.
+ 
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{thebibliography}{99}
+ 
+\bibitem{Homestake1968}
+    R.~Davis~Jr., D.~S.~Harmer, and K.~C.~Hoffman,
+    ``Search for neutrinos from the sun,''
+    \textit{Phys.\ Rev.\ Lett.}\ \textbf{20}, 1205 (1968).
+ 
+\bibitem{Bahcall1989}
+    J.~N.~Bahcall,
+    \textit{Neutrino Astrophysics}.
+    Cambridge University Press, 1989.
+ 
+\bibitem{MSW1985}
+    S.~P.~Mikheyev and A.~Yu.~Smirnov,
+    ``Resonance enhancement of oscillations in matter and solar neutrino
+    spectroscopy,''
+    \textit{Sov.\ J.\ Nucl.\ Phys.}\ \textbf{42}, 913 (1985).
+ 
+\bibitem{MSW1986}
+    L.~Wolfenstein,
+    ``Neutrino oscillations in matter,''
+    \textit{Phys.\ Rev.\ D}\ \textbf{17}, 2369 (1978);
+    \textit{ibid.}\ \textbf{20}, 2634 (1979).
+ 
+\bibitem{SNO2002}
+    Q.~R.~Ahmad \textit{et al.}\ (SNO Collaboration),
+    ``Measurement of day and night neutrino energy spectra at the
+    Sudbury Neutrino Observatory,''
+    \textit{Phys.\ Rev.\ Lett.}\ \textbf{89}, 011302 (2002).
+    \href{https://arxiv.org/abs/nucl-ex/0204009}{arXiv:nucl-ex/0204009}.
+ 
+\bibitem{KamLAND2003}
+    K.~Eguchi \textit{et al.}\ (KamLAND Collaboration),
+    ``First results from KamLAND: Evidence for reactor antineutrino
+    disappearance,''
+    \textit{Phys.\ Rev.\ Lett.}\ \textbf{90}, 021802 (2003).
+    \href{https://arxiv.org/abs/hep-ex/0212021}{arXiv:hep-ex/0212021}.
+ 
+\bibitem{PREM}
+    A.~M.~Dziewonski and D.~L.~Anderson,
+    ``Preliminary reference Earth model,''
+    \textit{Phys.\ Earth Planet.\ Inter.}\ \textbf{25}, 297 (1981).
+ 
+\bibitem{PDG2022}
+    R.~L.~Workman \textit{et al.}\ (Particle Data Group),
+    ``Review of Particle Physics,''
+    \textit{Prog.\ Theor.\ Exp.\ Phys.}\ \textbf{2022}, 083C01 (2022).
+ 
+\end{thebibliography}
+ 
+\end{document}
