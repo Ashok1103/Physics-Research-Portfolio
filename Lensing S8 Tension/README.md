@@ -13,7 +13,7 @@ actually measuring before attempting any parameter inference on top.
 
 ---
 
-## What it does
+## What it does:
 
 - **Matter power spectrum** via the Eisenstein & Hu (1998) transfer function,
   normalized to σ₈ using a top-hat window integral
