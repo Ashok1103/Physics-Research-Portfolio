@@ -6,7 +6,24 @@ spanning computational astrophysics and experimental particle physics.
 Each project includes full source code, figures, and a written report or paper.
 
 Projects
-1. SNO Solar Neutrino Analysis
+
+1. Weak Lensing Forward Model for Flat ΛCDM
+   
+Computational Cosmology · Gravitational Lensing · Parameter Sensitivity
+
+A weak gravitational lensing forward model built from scratch in Python using only
+numpy and scipy — no external cosmology libraries. Implements the full chain from
+(Ωₘ, σ₈) through the Eisenstein-Hu transfer function, Heath growth factor, and
+lensing convergence kernel to the shear correlation functions ξ₊(θ) and ξ₋(θ) via
+the Limber approximation and Hankel transform. Reproduces the S8 tension between
+Planck 2018 and KiDS-1000 at ~3.8σ, and characterizes the scale-dependent
+sensitivity of ξ₊ to cosmological parameters across angular scales 1–300 arcmin.
+Motivated by the UNIONS and Euclid weak lensing surveys.
+
+Key concepts: FLRW background · matter power spectrum · lensing kernel · Limber
+approximation · shear correlation functions · S8 tension · parameter sensitivity
+
+2. SNO Solar Neutrino Analysis
 
 Particle Physics · Neutrino Oscillations · Chi-Squared Fitting
 
@@ -29,11 +46,11 @@ Key concepts: Kepler's equation · Newton–Raphson iteration · visual binary g
 Skills Demonstrated
 
 Scientific computing in Python (NumPy, SciPy, Matplotlib, Pandas)
-Chi-squared fitting and statistical uncertainty estimation
-Numerical methods (Newton–Raphson, orbital integration)
-Physics writing and LaTeX typesetting
-Connecting theoretical models to observational data
-
+- Cosmological forward modelling and lensing statistics
+- Chi-squared fitting and statistical uncertainty estimation
+- Numerical methods (Newton–Raphson, trapezoidal integration, Hankel transforms)
+- Physics writing and LaTeX typesetting
+- Connecting theoretical models to observational data
 
 Contact:
 Feel free to reach out via GitHub or email for questions about any of these projects.
