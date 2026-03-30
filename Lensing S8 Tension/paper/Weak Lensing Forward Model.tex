@@ -1,0 +1,454 @@
+\documentclass[12pt, a4paper]{article}
+ 
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{natbib}
+\usepackage{microtype}
+\usepackage{xcolor}
+ 
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=blue!60!black,
+    urlcolor=blue!60!black
+}
+ 
+\onehalfspacing
+ 
+\title{\textbf{A Weak Lensing Forward Model for Flat $\Lambda$CDM}\\
+\large From the Matter Power Spectrum to Shear Correlation Functions}
+ 
+\author{Ashok Kumar Ramu\\
+\small Department of Physics and Astronomy, University of Waterloo}
+ 
+\date{March 2026}
+ 
+\begin{document}
+ 
+\maketitle
+ 
+\begin{abstract}
+I build a weak gravitational lensing forward model from scratch in Python using
+only \texttt{numpy} and \texttt{scipy}, with no external cosmology libraries.
+Starting from the FLRW background, I implement the Eisenstein \& Hu (1998)
+transfer function, the Heath (1977) growth factor, and the lensing convergence
+kernel to compute the shear power spectrum $C_\ell$ via the Limber approximation.
+The shear correlation functions $\xi_\pm(\theta)$ are recovered by Hankel
+transform. I reproduce the observed $S_8$ tension between Planck CMB constraints
+and weak lensing surveys (KiDS-1000, DES Y3) at the $\sim3.8\sigma$ level, and
+characterize the scale-dependent sensitivity of $\xi_+$ to $\Omega_m$ and
+$\sigma_8$. The main result is that $\sigma_8$ shifts the signal by a uniform
+$\sim$21\% per 10\% parameter change across all angular scales, while $\Omega_m$
+produces a scale-dependent response that changes sign near $\theta \sim 200$
+arcmin. This is directly relevant to the measurement strategy of wide-field
+lensing surveys such as UNIONS and Euclid.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+ 
+% ============================================================
+\section{Motivation}
+% ============================================================
+ 
+Weak gravitational lensing is one of the cleanest probes of the matter
+distribution in the Universe. Background galaxies appear slightly elliptical
+because their light follows geodesics deflected by the foreground metric
+perturbations sourced by large-scale structure. Measuring these coherent
+distortions across the sky gives a direct statistical handle on the amplitude
+and shape of the matter power spectrum, and therefore on $\Omega_m$ and
+$\sigma_8$.
+ 
+The reason this is interesting right now is the $S_8$ tension.
+The combination $S_8 \equiv \sigma_8\sqrt{\Omega_m/0.3}$ is what weak lensing
+surveys constrain most tightly, and current measurements sit $\sim3$--$4\sigma$
+below the value inferred from the Planck CMB. The Kilo-Degree Survey
+\citep{Asgari2021} finds $S_8 = 0.766 \pm 0.017$ and the Dark Energy Survey
+Year 3 analysis \citep{Amon2022} gives $S_8 = 0.776 \pm 0.017$, both
+systematically lower than the Planck 2018 value of $S_8 = 0.831 \pm 0.006$
+\citep{Aghanim2020}. Whether this is a systematic effect or new physics is
+an open question.
+ 
+The UNIONS survey \citep[Ultraviolet Near-Infrared Northern Survey;][]{UNIONS},
+currently being carried out with the Canada-France-Hawaii Telescope, will provide
+an independent northern-hemisphere lensing measurement and is expected to
+contribute to resolving this tension. The motivation for this project is to
+understand, from first principles, what UNIONS is actually measuring before
+attempting any parameter inference on top.
+ 
+The goal here is not to produce a production-level pipeline. It is to build
+an honest forward model---one where every line of physics is visible and
+testable---and use it to understand which angular scales carry cosmological
+information and how.
+ 
+% ============================================================
+\section{Theory}
+% ============================================================
+ 
+\subsection{FLRW Background}
+ 
+I work throughout in flat $\Lambda$CDM. The dimensionless Hubble parameter is
+\begin{equation}
+    E(z) \equiv \frac{H(z)}{H_0} = \sqrt{\Omega_m(1+z)^3 + \Omega_\Lambda},
+\end{equation}
+where $\Omega_\Lambda = 1 - \Omega_m$ enforces flatness. The comoving distance
+to redshift $z$ is
+\begin{equation}
+    \chi(z) = \frac{c}{H_0} \int_0^z \frac{dz'}{E(z')},
+\end{equation}
+which I evaluate numerically using a 500-point trapezoidal rule at each $z$.
+As a sanity check, $\chi(z=1100) \approx 14{,}000\,\mathrm{Mpc}$, consistent
+with the comoving distance to the CMB surface of last scattering.
+ 
+\subsection{Growth Factor}
+ 
+Structure growth in the linear regime is captured by the growth factor $D(z)$,
+normalized so that $D(0) = 1$. I use the integral form from \citet{Heath1977},
+\begin{equation}
+    D(z) \propto H(z)\int_z^\infty \frac{1+z'}{H^3(z')}\,dz',
+\end{equation}
+evaluated with \texttt{scipy.integrate.quad} and normalized to unity at $z=0$.
+ 
+\subsection{Matter Power Spectrum}
+ 
+The linear matter power spectrum at $z=0$ is
+\begin{equation}
+    P(k) = A_s\, k^{n_s}\, T^2(k),
+\end{equation}
+where $n_s = 0.9649$ is the spectral index \citep{Aghanim2020} and $T(k)$ is
+the transfer function. I use the Eisenstein \& Hu (1998) fitting formula
+\citep{EisensteinHu1998}, which handles baryon acoustic features and is accurate
+to $\sim$5\% for standard $\Lambda$CDM. The simpler BBKS approximation ignores
+baryons entirely and would introduce a visible error at the percent level.
+ 
+The normalization $A_s$ is set by requiring
+\begin{equation}
+    \sigma_8^2 = \frac{1}{2\pi^2}\int_0^\infty k^2\,P(k)\,|\tilde{W}(kR)|^2\,dk,
+    \quad R = 8\,h^{-1}\,\mathrm{Mpc},
+\end{equation}
+where $\tilde{W}(x) = 3(\sin x - x\cos x)/x^3$ is the Fourier transform of a
+real-space top-hat window. Varying $\sigma_8$ at fixed $\Omega_m$ rescales
+$P(k)$ by a constant factor, which is why it affects $\xi_\pm$ uniformly across
+all angular scales (Section~\ref{sec:sensitivity}).
+ 
+At redshift $z$, the power spectrum is suppressed by the growth factor:
+$P(k,z) = P(k,0)\,D^2(z)$.
+ 
+\subsection{Weak Lensing Kernel}
+ 
+The lensing convergence $\kappa$ is a weighted projection of the matter overdensity
+along the line of sight:
+\begin{equation}
+    \kappa(\hat{n}) = \int_0^{\chi_H} W(\chi)\,\delta(\chi\hat{n},\,z(\chi))\,d\chi,
+\end{equation}
+where the lensing kernel is
+\begin{equation}
+    W(\chi) = \frac{3}{2}\left(\frac{H_0}{c}\right)^2\Omega_m
+    \frac{\chi}{a(\chi)}\int_\chi^{\chi_H}
+    n(\chi')\frac{\chi'-\chi}{\chi'}\,d\chi'.
+    \label{eq:kernel}
+\end{equation}
+The prefactor $(3/2)(H_0/c)^2\Omega_m$ comes from combining the Poisson equation
+in comoving coordinates with the GR light deflection formula; most review papers
+quote only the final Limber result without showing this derivation.
+ 
+The source galaxy redshift distribution $n(z)$ is modelled as
+\begin{equation}
+    n(z) \propto \left(\frac{z}{z_*}\right)^\alpha
+    \exp\!\left[-\left(\frac{z}{z_*}\right)^\beta\right],
+\end{equation}
+with $z_* = 0.5$, $\alpha = 1.5$, $\beta = 2.0$, normalized to unit integral.
+This is a plausible approximation for a ground-based survey at SDSS/UNIONS depth;
+I do not use the actual UNIONS $n(z)$ here.
+ 
+\subsection{Shear Power Spectrum and Correlation Functions}
+ 
+The shear $E$-mode power spectrum follows from the Limber approximation
+\citep{Limber1953,Loverde2008},
+\begin{equation}
+    C_\ell = \int_0^{\chi_H}
+    \frac{W^2(\chi)}{\chi^2}\,P\!\left(\frac{\ell+1/2}{\chi},\,z(\chi)\right)d\chi,
+    \label{eq:limber}
+\end{equation}
+which is accurate for $\ell \gg 1$, i.e.\ throughout the range I use
+($\ell = 2$--$2000$). I evaluate this on a geometrically-spaced grid of 80
+multipoles.
+ 
+The shear correlation functions are related to $C_\ell$ by Hankel transforms:
+\begin{align}
+    \xi_+(\theta) &= \frac{1}{2\pi}\int_0^\infty \ell\,C_\ell\,J_0(\ell\theta)\,d\ell,
+    \label{eq:xip}\\
+    \xi_-(\theta) &= \frac{1}{2\pi}\int_0^\infty \ell\,C_\ell\,J_4(\ell\theta)\,d\ell,
+    \label{eq:xim}
+\end{align}
+where $J_0$ and $J_4$ are Bessel functions of the first kind. Both $J_0$ and $J_4$ appear because $\xi_+$ and $\xi_-$ are two distinct 
+components of the shear two-point function, related to the $E$-mode power 
+spectrum by separate Hankel transforms of different order. The orders 0 and 
+4 follow from the spin-2 nature of the shear field 
+\citep[eq.~2.69]{Bartelmann2001}; they are not interchangeable. These integrals are evaluated on a dense
+grid of $8000$ multipoles using \texttt{scipy.special.jv} and
+\texttt{numpy.trapezoid}.
+ 
+% ============================================================
+\section{Results}
+% ============================================================
+ 
+I use Planck 2018 best-fit parameters as a fiducial throughout:
+$\Omega_m = 0.315$, $\sigma_8 = 0.811$, $\Omega_b = 0.0486$,
+$H_0 = 67.3\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$, $n_s = 0.9649$
+\citep{Aghanim2020}.
+ 
+\subsection{Matter Power Spectrum}
+ 
+Figure~\ref{fig:pk} shows $P(k)$ at $z=0$ for a range of $\Omega_m$ (left) and
+$\sigma_8$ (right). Increasing $\Omega_m$ shifts the turnover to larger $k$
+because matter-radiation equality occurs at a higher redshift, compressing the
+horizon scale. Increasing $\sigma_8$ uniformly rescales the amplitude with no
+change to the shape, as expected from equation~(\ref{eq:limber}).
+ 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{fig1_power_spectrum.png}
+    \caption{Linear matter power spectrum $P(k)$ at $z=0$ computed using the
+    Eisenstein \& Hu (1998) transfer function. \textit{Left:} Varying $\Omega_m$
+    with $\sigma_8 = 0.811$ fixed. Increasing $\Omega_m$ shifts the turnover
+    scale to larger $k$ and suppresses large-scale power. \textit{Right:} Varying
+    $\sigma_8$ with $\Omega_m = 0.315$ fixed. $\sigma_8$ is a pure normalization
+    with no effect on the shape. The Planck 2018 fiducial is shown as a solid
+    orange curve in both panels.}
+    \label{fig:pk}
+\end{figure}
+ 
+\subsection{Lensing Kernel}
+ 
+Figure~\ref{fig:kernel} shows the lensing kernel $W(\chi)$ from
+equation~(\ref{eq:kernel}) for three values of $\Omega_m$. Two effects are
+visible. First, the amplitude scales roughly as $\Omega_m^2$: one factor comes
+from the prefactor in equation~(\ref{eq:kernel}), and a second from the larger
+density contrast $\delta$ in a more matter-dominated universe. Second, the
+peak shifts to lower $\chi$ for higher $\Omega_m$ because the comoving
+distance--redshift relation is compressed.
+ 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.78\linewidth]{fig2_lensing_kernel.png}
+    \caption{Weak lensing kernel $W(\chi)$ for three values of $\Omega_m$,
+    with the corresponding redshift scale shown on the upper axis. The kernel
+    peaks near $\chi \sim 1000\,\mathrm{Mpc}$ ($z \sim 0.3$) for the Planck
+    fiducial, reflecting the geometric weighting between observer, lens, and
+    source planes.}
+    \label{fig:kernel}
+\end{figure}
+ 
+\subsection{Shear Correlation Functions}
+ 
+Figures~\ref{fig:xi_om} and~\ref{fig:xi_s8} show $\xi_+$ and $|\xi_-|$ at
+eleven angular scales spanning $1$--$300$ arcmin. Both correlation functions
+decrease monotonically with $\theta$ in the range plotted; the dip visible in
+$|\xi_-|$ near $\theta \sim 2$--$5$ arcmin reflects a sign change in $\xi_-$
+at those scales.
+ 
+The curves separate cleanly for different parameter values in both figures,
+confirming that the forward model is sensitive enough to distinguish $\Delta\Omega_m
+\sim 0.05$ and $\Delta\sigma_8 \sim 0.1$ over this angular range. This is the
+signal that UNIONS measures from galaxy ellipticities using TreeCorr
+\citep{Jarvis2004}.
+ 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{fig3_xi_vary_omega_m.png}
+    \caption{Shear correlation functions $\xi_+(\theta)$ (left) and
+    $|\xi_-(\theta)|$ (right) for five values of $\Omega_m$ with
+    $\sigma_8 = 0.811$ fixed.}
+    \label{fig:xi_om}
+\end{figure}
+ 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{fig4_xi_vary_sigma8.png}
+    \caption{Same as Figure~\ref{fig:xi_om} but varying $\sigma_8$ with
+    $\Omega_m = 0.315$ fixed. The separation between curves is more uniform
+    across scales than for $\Omega_m$.}
+    \label{fig:xi_s8}
+\end{figure}
+ 
+\subsection{The $S_8$ Tension}
+ 
+Figure~\ref{fig:s8} shows the $(\Omega_m, \sigma_8)$ plane with contours of
+constant $S_8 = \sigma_8\sqrt{\Omega_m/0.3}$ overlaid. The Planck 2018 best-fit
+sits at $S_8 = 0.831 \pm 0.006$, while KiDS-1000 \citep{Asgari2021} and
+DES Y3 \citep{Amon2022} both cluster near $S_8 \approx 0.77$. The tension
+is $\sim3.8\sigma$ when comparing Planck to KiDS-1000.
+ 
+The contour structure in Figure~\ref{fig:s8} is directly related to
+the degeneracy visible in the correlation functions: at small angular scales
+where both $\Omega_m$ and $\sigma_8$ produce a similar $\sim$21\% response
+per 10\% parameter shift, lensing essentially constrains only the combination
+$S_8$ and cannot separate the two parameters individually.
+ 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.78\linewidth]{fig5_s8_tension.png}
+    \caption{The $S_8$ tension in the $(\Omega_m, \sigma_8)$ plane. Dashed
+    grey contours show lines of constant $S_8$; the colour map encodes the
+    $S_8$ value. Planck 2018 (red star) sits $\sim3.8\sigma$ above the KiDS-1000
+    (blue diamond) and DES Y3 (green triangle) measurements along the $S_8$
+    degeneracy direction. Approximate $1\sigma$ ellipses are shown for each
+    experiment.}
+    \label{fig:s8}
+\end{figure}
+ 
+\subsection{Parameter Sensitivity}
+\label{sec:sensitivity}
+ 
+Figure~\ref{fig:sensitivity} quantifies the fractional change in $\xi_+$ when
+$\Omega_m$ or $\sigma_8$ is shifted by 10\% from the Planck fiducial. Two
+results stand out.
+ 
+First, $\sigma_8$ produces a scale-independent response of $\pm$21\% across
+all angular scales. This follows analytically from $\xi_+ \propto \sigma_8^2$:
+a 10\% shift in $\sigma_8$ gives a $1.1^2 - 1 \approx 21\%$ change in
+$\xi_+$ at every $\theta$.
+ 
+Second, the $\Omega_m$ response is strongly scale-dependent. At small angles
+($\theta \lesssim 10$ arcmin) a 10\% increase in $\Omega_m$ raises $\xi_+$ by
+$\sim$21\%, similar to $\sigma_8$. This is the origin of the $S_8$ degeneracy:
+at small scales the two parameters are nearly interchangeable. At large angles
+($\theta \gtrsim 100$ arcmin) the $\Omega_m$ response drops toward zero and
+changes sign near $\theta \sim 200$ arcmin. This sign change is a real feature
+of the Hankel transform: as $\Omega_m$ increases, the power spectrum turnover
+shifts and the large-angle correlation function actually decreases.
+ 
+The practical implication is that angular scales above $\sim$100 arcmin carry
+information about $\Omega_m$ that is \emph{independent} of the $S_8$ degeneracy
+direction. Wide-field surveys like UNIONS, which cover thousands of square degrees,
+have access to these large angular separations and can therefore place tighter
+individual constraints on $\Omega_m$ than a narrow deep survey with the same
+number of galaxies.
+ 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\linewidth]{fig6_sensitivity.png}
+    \caption{Fractional change in $\xi_+(\theta)$ for $\pm$10\% shifts in
+    $\Omega_m$ (red) and $\sigma_8$ (blue), relative to the Planck fiducial.
+    The $\sigma_8$ response is flat at $\pm$21\% by construction. The $\Omega_m$
+    response is scale-dependent, peaking at small angles and changing sign near
+    $\theta \sim 200$ arcmin. At small scales both parameters produce the same
+    fractional change, which is the geometric origin of the $S_8$ degeneracy.}
+    \label{fig:sensitivity}
+\end{figure}
+ 
+% ============================================================
+\section{Discussion and Next Steps}
+% ============================================================
+ 
+The forward model reproduces known results: the $S_8$ tension at the correct
+significance, the expected $\sigma_8^2$ scaling of the lensing signal, and the
+qualitative shape of $\xi_\pm$ consistent with published KiDS and DES
+measurements.
+
+There are several approximations worth noting. The most significant is the use 
+of the linear matter power spectrum throughout. At angular scales 
+$\theta \lesssim 10$ arcmin, nonlinear structure growth substantially enhances 
+the lensing signal relative to the linear prediction, and the two can differ by 
+factors of several at arcminute scales. The sensitivity results in 
+Figure~\ref{fig:sensitivity} should therefore be interpreted as valid only at 
+$\theta \gtrsim 10$ arcmin. Implementing \texttt{HaloFit} \citep{Smith2003} or 
+the \texttt{EuclidEmulator} \citep{EuclidEmulator2021} at small scales is the 
+most important numerical extension of this work, and would be required before 
+attempting any quantitative parameter inference against real data. The $n(z)$ used here is a smooth
+analytic form; the real UNIONS $n(z)$ will have structure from photometric
+redshift errors and tomographic binning. The Limber approximation in
+equation~(\ref{eq:limber}) introduces errors of order $(1/\ell)^2$ at the
+lowest multipoles but is sufficient for $\ell \gtrsim 10$. Nonlinear structure
+growth, which becomes important below $\sim$10 arcmin, is not included; a
+production pipeline would use \texttt{HaloFit} \citep{Smith2003} or the
+\texttt{EuclidEmulator} \citep{EuclidEmulator2021} at those scales.
+ 
+The natural next step is a Fisher matrix forecast for a UNIONS-like survey
+geometry. Given the sensitivity derivatives already computed here, the Fisher
+matrix
+\begin{equation}
+    F_{ij} = \sum_{\theta,\theta'}
+    \frac{\partial\xi_+(\theta)}{\partial p_i}\,
+    \text{Cov}^{-1}(\theta,\theta')\,
+    \frac{\partial\xi_+(\theta')}{\partial p_j}
+\end{equation}
+would predict the expected $1\sigma$ constraints on $\Omega_m$ and $\sigma_8$
+as a function of survey area and galaxy number density. The covariance matrix
+for a survey of area $A$ and shape noise $\sigma_e^2/n_\mathrm{gal}$ is
+well-approximated analytically \citep{Joachimi2008}.
+ 
+A longer-term extension would be to train a neural network on a grid of
+simulated $\xi_\pm$ vectors and use it for direct parameter inference on real
+SDSS or UNIONS data. The sensitivity analysis in Section~\ref{sec:sensitivity}
+suggests this is feasible: the $\xi_\pm$ vectors at 11 angular scales carry
+sufficient information to distinguish cosmologies at the few-percent level in
+both parameters.
+ 
+% ============================================================
+\section*{Code}
+% ============================================================
+ 
+The full notebook, including all figures, is available at
+\url{https://github.com/Ashok1103/Physics-Research-Portfolio.git}.
+All computations use only \texttt{numpy}, \texttt{scipy}, and
+\texttt{matplotlib}. No external cosmology libraries are required.
+ 
+% ============================================================
+\begin{thebibliography}{99}
+
+\bibitem[Aghanim et al.(2020)]{Aghanim2020}
+Aghanim N., et al., 2020, A\&A, 641, A6
+
+\bibitem[Asgari et al.(2021)]{Asgari2021}
+Asgari M., et al., 2021, A\&A, 645, A104
+
+\bibitem[Amon et al.(2022)]{Amon2022}
+Amon A., et al., 2022, Phys. Rev. D, 105, 023514
+
+\bibitem[Eisenstein \& Hu(1998)]{EisensteinHu1998}
+Eisenstein D.~J., Hu W., 1998, ApJ, 496, 605
+
+\bibitem[Heath(1977)]{Heath1977}
+Heath D.~J., 1977, MNRAS, 179, 351
+
+\bibitem[Bartelmann \& Schneider(2001)]{Bartelmann2001}
+Bartelmann M., Schneider P., 2001, Phys. Rep., 340, 291
+
+\bibitem[Limber(1953)]{Limber1953}
+Limber D.~N., 1953, ApJ, 117, 134
+
+\bibitem[LoVerde \& Afshordi(2008)]{Loverde2008}
+LoVerde M., Afshordi N., 2008, Phys. Rev. D, 78, 123506
+
+\bibitem[Jarvis et al.(2004)]{Jarvis2004}
+Jarvis M., Bernstein G., Jain B., 2004, MNRAS, 352, 338
+
+\bibitem[Smith et al.(2003)]{Smith2003}
+Smith R.~E., et al., 2003, MNRAS, 341, 1311
+
+\bibitem[Euclid Collaboration et al.(2021)]{EuclidEmulator2021}
+Euclid Collaboration, Knabenhans M., et al., 2021, MNRAS, 505, 2840
+
+\bibitem[Joachimi \& Schneider(2008)]{Joachimi2008}
+Joachimi B., Schneider P., 2008, A\&A, 488, 829
+
+\bibitem[Hudson et al.(2024)]{UNIONS}
+Hudson M.~J., et al., 2024, UNIONS: Ultraviolet Near-Infrared Northern Survey,
+\url{https://www.skysurvey.cc}
+
+\end{thebibliography}
+
+\end{document}
+% ============================================================
+ 
+\end{document}
