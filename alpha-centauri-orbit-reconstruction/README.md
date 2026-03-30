@@ -32,8 +32,8 @@ x = r [cos Ω cos(ν+ω) - sin Ω sin(ν+ω) cos i]
 y = r [sin Ω cos(ν+ω) + cos Ω sin(ν+ω) cos i]
 
 **Observables:**
-ρ = √(x² + y²)        (angular separation)
-θ = arctan2(x, y)     (position angle, eastward from north)
+ρ = √(x² + y²)       (angular separation)
+θ = arctan2(x, y)    (position angle, eastward from north)
 
 ---
 
