@@ -11,7 +11,7 @@ flux ratio in the adiabatic MSW regime.
 ---
 
 ## Result
-θ₁₂ = 36.0° ± 2.3°   (SNO Phase I only, consistent with 2002 publication)
+θ₁₂ = 36.0° ± 2.3°  (SNO Phase I only, consistent with 2002 publication)
 
 The vacuum-averaged formula predicts P_ee ≈ 0.548 — ruled out by SNO at **5.5σ**.  
 The correct adiabatic MSW formula gives P_ee = sin²(θ₁₂) ≈ 0.303, consistent
